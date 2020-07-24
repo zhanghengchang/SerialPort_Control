@@ -1,0 +1,2 @@
+rootProject.name='SerialPort_Control'
+include ':app'
