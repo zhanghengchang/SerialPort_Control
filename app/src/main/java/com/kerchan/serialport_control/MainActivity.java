@@ -20,9 +20,9 @@ import android_serialport_api.SerialPort;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView img1,img2,img3;
-    protected SerialPort mSerialPort;
-    protected InputStream mInputStream;
-    protected OutputStream mOutputStream;
+    private SerialPort mSerialPort;
+    private InputStream mInputStream;
+    private OutputStream mOutputStream;
     private ReadThread mReadThread;
 
     private class ReadThread extends Thread
@@ -31,20 +31,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void run()
         {
             super.run();
-
             while(!isInterrupted())
             {
                 int size;
-                Log.v("debug", "接收线程已经开启");
+                Log.d("debug", "接收线程已经开启");
                 try
                 {
                     byte[] buffer = new byte[64];
-
                     if (mInputStream == null)
                         return;
-
                     size = mInputStream.read(buffer);
-
                     if (size > 0)
                     {
                         onDataReceived(buffer, size);
@@ -59,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    protected void onDataReceived(final byte[] buffer, final int size) {
+    private void onDataReceived(final byte[] buffer, final int size) {
         runOnUiThread(new Runnable(){
             public void run(){
                 String recinfo = new String(buffer, 0, size);
                 Toast.makeText(MainActivity.this,"onDataReceived: " + recinfo,
                         Toast.LENGTH_SHORT).show();
-                Log.v("debug", "接收到串口信息======>" + recinfo + "/");
+                Log.d("debug", "接收到串口信息======>" + recinfo + "/");
             }
         });
     }
@@ -110,13 +106,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.img1:
-                sendCmds("PU001");
+                sendCmds("000");
                 break;
             case R.id.img2:
-                sendCmds("PU002");
+                sendCmds("001");
                 break;
             case R.id.img3:
-                sendCmds("PU003");
+                sendCmds("002");
                 break;
             default:
                 break;
@@ -129,10 +125,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @param cmd
      * @return
      */
-    public boolean sendCmds(String cmd) {
+    private boolean sendCmds(String cmd) {
         boolean result = true;
         byte[] mBuffer = cmd.getBytes();
-        //注意：我得项目中需要在每次发送后面加\r\n，大家根据项目项目做修改，也可以去掉，直接发送mBuffer
         try {
             if (mOutputStream != null) {
                 mOutputStream.write(mBuffer);
